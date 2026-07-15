@@ -1,0 +1,88 @@
+Software Engineering (cs.SE); Artificial Intelligence (cs.AI)
+	Inside the Skill Market: From Software Engineering Activities to Reusable Agent Skills
+	SCATE: Learning to Supervise Coding Agents for Cost-Effective Test Generation
+	The Patchwork Problem in LLM-Generated Code
+	REFORGE: A Method for Benchmarking LLMs' Reverse Engineering Capabilities in Decompiled Binary Function Naming
+
+
+
+
+Computer Vision and Pattern Recognition (cs.CV); Artificial Intelligence (cs.AI); Machine Learning (cs.LG)
+	Video Generation Models are General-Purpose Vision Learners
+	On Locality and Length Generalization in Visual Reasoning
+	MultiView-Bench: A Diagnostic Benchmark for World-Centric Multi-View Integration in VLMs
+
+Quantum Physics (quant-ph); Artificial Intelligence (cs.AI); Logic (math.LO); Neurons and Cognition (q-bio.NC)
+	Quantum Logic as the Logic of Contexts
+	A Novel Parallel QCNN Architecture with Efficient Classical Simulability
+	Minimal Decision Dynamics and Contextual Probability: A Quantum Tug-of-War Model
+
+
+Neural and Evolutionary Computing (cs.NE); Artificial Intelligence (cs.AI);
+	Evolutionary Intelligence for Scientific Discovery: From Evolutionary Computation to Cumulative Discovery Systems
+
+Audio and Speech Processing (eess.AS);
+	Phone Segmentation and Recognition through Phonological Activation Mapping
+Machine Learning (cs.LG); Artificial Intelligence (cs.AI)
+	Correlation-Aware Contextual Bandits with Surrogate Rewards for LLM Routing
+	Model Agnostic Graph Prompt Learning for Crystal Property Prediction
+	AlphaZero in Sparsely Rewarded Games: Limits and Auxiliary Supervision
+	NL-PAC: Specification Ambiguity and Certified Minimax Risk Floors in LLM-Mediated Supervision
+	Eluna: An Agentic LLM System for Automating Warehouse Operations with Reasoning and Task Execution
+	Prompt-Driven Exploration	
+	EHR-MPC: Inference-Time Control for Sepsis Treatment with Generative Patient Digital Twins
+	Accelerating GPU Inference of Large Language Models with Moderately Unstructured Sparse Weight Matrices
+	DaDaDa: A Dataset for Data Pricing in Data Marketplaces
+	HERO: A Heterogeneity-Aware Benchmark Library for Federated Continual Learning
+	LieBN: Batch Normalization over Lie Groups
+	Director: Accelerating Distributed MoE Serving via Online Proactive Expert Placement
+	Reward Transport: Property Control in Flow Matching via Noise-Space Alignment
+	Sticky Routing: Training MoE Models for Memory-Efficient Inference
+	Signed Symmetric Quantization for Few-Bit Integers
+	iLENS: Interpretable LLM-Guided Mixture-of-Experts for Neuroimaging Survival Analysis
+	A Unified Approach to Interpreting Knowledge Distillation for Large Language Models via Interactions
+
+Artificial Intelligence (cs.AI)
+	ConceptSMILE: Auditing the Trustworthiness of Concept-Based Explainable AI
+	Agora: Enhancing LLM Agent Reasoning Via Auction-Based Task Allocation
+	TrustX Agent Risk Classification Framework (ARC): Risk-Tiering Internally Created Agentic AI Systems
+	Knowledge Graphs and Explainable AI as Complementary Resources for Urban Mining
+	Beyond Fixed Representations: The Vocabulary and Verifier Gaps in Open-Ended AI
+	SAGEAgent: A Self-Evolving Agent for Cost-Aware Modality Acquisition in Multimodal Survival Prediction
+	Shared Selective Persistent Memory for Agentic LLM Systems
+	Multimodal Reward Hacking in Reinforcement Learning
+	Ceci n'est pas une pipe: AI systems as semantic abstractions
+	ProofCouncil: An LLM Agent for Solving Open Mathematical Problems
+	How Does Bayesian Causal Discovery Fail? Characterising Structural Consequences in Linear Gaussian Networks under Latent Confounding
+	Fictional Worldbuilding: Multi-Agent LLM Collaboration with Hierarchical Context Compression and Iterative Review
+	Communication-Efficient Digital-Twin Coordination for Heterogeneous LLM Embodied Agents over Computing Power Networks
+	LongMedBench: Benchmarking Medical Agents for Long-Horizon Clinical Decision-Making
+	OpenProver: Agentic and Interactive Theorem Proving with Lean 4
+	Toward Auditable AI Scientists: A Hypothesis Evolution Protocol for LLM Agents
+	Scoped Verification for Reliable Long-Horizon Agentic Context Evolution under Distribution Shift
+	KV-PRM: Efficient Process Reward Modeling via KV-Cache Transfer for Multi-Agent Test-Time Scaling
+	MedRealMM: A Real-World Multimodal Benchmark for Chinese Online Medical Consultation
+	L-MAD: A Systematic Evaluation of Multi-Agent Debate Structures in Legal Reasoning
+	Neuro-Agentic Control: A Deep Learning-based LLM-Powered Agentic AI Framework for Controlling Security Controls
+	ARCANA: A Reflective Multi-Agent Program Synthesis Framework for ARC-AGI-2 Reasoning
+	A Formalization of the Mean-Field Derivation of the Vlasov Equation: AI-Assisted Lean Formalization as a Strategy Game
+	Long-Horizon-Terminal-Bench: Testing the Limits of Agents on Long-Horizon Terminal Tasks with Dense Reward-Based Grading
+	GATS: Graph-Augmented Tree Search with Layered World Models for Efficient Agent Planning
+	CogniConsole: Externalizing Inference-Time Control as a Formal Abstraction for Reliable LLM Interactions
+	Interval Certifications for Multilayered Perceptrons via Lattice Traversal
+
+
+
+Robotics (cs.RO); Artificial Intelligence (cs.AI)
+	CLAP: Direct VLM-to-VLA Adaptation via Language-Action Grounding
+
+
+Quantitative Methods (q-bio.QM); Artificial Intelligence (cs.AI); Machine Learning (cs.LG)
+	TheBioCollection: Unified Pre-Training Scale LLM Corpus for Biology
+Graphics (cs.GR); Artificial Intelligence (cs.AI)
+	Multi-Conditioned Diffusion Synthesis of Sand Boils for Low-Resource Earthen-Levee Inspection
+
+Neural and Evolutionary Computing (cs.NE); Artificial Intelligence (cs.AI)
+	LLM-Driven Evolutionary Generation of Multi-Objective Bayesian Optimization Algorithms
+
+
