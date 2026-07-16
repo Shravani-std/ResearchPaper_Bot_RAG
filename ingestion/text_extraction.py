@@ -59,10 +59,10 @@ def extract_text_from_pdf(pdf_path: str) -> str:
     return text
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    pdf_path = r"D:\AI\RAG\Projects\data\sample.pdf"
+#     pdf_path = r"D:\AI\RAG\Projects\data\sample.pdf"
 
-    extracted_text = extract_text_from_pdf(pdf_path)
+#     extracted_text = extract_text_from_pdf(pdf_path)
 
-    print(extracted_text)
+#     print(extracted_text)

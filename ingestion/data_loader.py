@@ -44,10 +44,10 @@ def load_documents(data_dir: str) -> List[Any]:
     return documents
 
 
-if __name__=="__main__":
-    data_path = r"D:\AI\RAG\Projects\data"
-    docs = load_documents(data_path)
-    print(f"[DEBUG] Total documents loaded: {len(docs)}")
-    print("Example document content:")
-    for doc in docs[:3]:  # Print content of first 3 documents
-        print(doc.page_content)
+# if __name__=="__main__":
+#     data_path = r"D:\AI\RAG\Projects\data"
+#     docs = load_documents(data_path)
+#     print(f"[DEBUG] Total documents loaded: {len(docs)}")
+#     print("Example document content:")
+#     for doc in docs[:3]:  # Print content of first 3 documents
+#         print(doc.page_content)
