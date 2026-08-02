@@ -1,12 +1,10 @@
 from pathlib import Path
 from typing import List, Any
-from langchain_community.document_loaders import PyPDFLoader  
+# from langchain_community.document_loaders import PyPDFLoader  
 from langchain_community.document_loaders import TextLoader 
-# from langchain_community.document_loaders import  CSVLoader # type: ignore
-# from langchain_community.document_loaders import Docx2txtLoader # type: ignore
-# from langchain_community.document_loaders.excel import UnstructuredExcelLoader # type: ignore
-# from Langchain_community.document_loaders import JSONLoader # type: ignore
-
+from langchain_core.documents import Document
+import fitz
+from ingestion.text_extraction import clean_text
 
 def load_documents(data_dir: str) -> List[Any]:
 
@@ -15,18 +13,32 @@ def load_documents(data_dir: str) -> List[Any]:
     documents = []
 
     #PDF Files
-    pdf_files = list(data_path.glob('**/*.pdf'))
-    print(f"[DEBUG] Found {len(pdf_files)} PDF files. {[str(f) for f in pdf_files]}")
+    pdf_files = list(data_path.glob("**/*.pdf"))
 
     for pdf_file in pdf_files:
-        print(f"[DEBUG] Loading PDF: {pdf_file}")
+
         try:
-            loader = PyPDFLoader(str(pdf_file))
-            loaded = loader.load()
-            print(f"[DEBUG] Loaded {len(loaded)} PDF docs from {pdf_file}")
-            documents.extend(loaded)
+            pdf = fitz.open(pdf_file)
+
+            for page_num, page in enumerate(pdf):
+
+                text = page.get_text()
+                text = clean_text(text)
+
+                documents.append(
+                    Document(
+                        page_content=text,
+                        metadata={
+                            "source": str(pdf_file),
+                            "page": page_num + 1
+                        }
+                    )
+                )
+
+            pdf.close()
+
         except Exception as e:
-            print(f"[ERROR] Failed to load PDF: {pdf_file}, Error: {e}")
+            print(e)
 
 
     #Text Files
@@ -44,10 +56,16 @@ def load_documents(data_dir: str) -> List[Any]:
     return documents
 
 
-# if __name__=="__main__":
+# if __name__ == "__main__":
 #     data_path = r"D:\AI\RAG\Projects\data"
+
 #     docs = load_documents(data_path)
-#     print(f"[DEBUG] Total documents loaded: {len(docs)}")
-#     print("Example document content:")
-#     for doc in docs[:3]:  # Print content of first 3 documents
-#         print(doc.page_content)
+
+#     print(f"Total documents: {len(docs)}")
+
+
+#     for doc in docs[:5]:
+#         print("=" * 50)
+#         print(doc.metadata)
+#         print(doc.page_content[:300])
+

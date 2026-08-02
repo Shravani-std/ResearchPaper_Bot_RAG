@@ -35,28 +35,28 @@ def clean_text(text: str) -> str:
     return text
 
 
-def extract_text_from_pdf(pdf_path: str) -> str:
-    """
-    Extract text from a PDF using PyMuPDF
-    and clean the extracted text.
-    """
+# def extract_text_from_pdf(pdf_path: str) -> str:
+#     """
+#     Extract text from a PDF using PyMuPDF
+#     and clean the extracted text.
+#     """
 
-    text = ""
+#     text = ""
 
-    try:
-        with fitz.open(pdf_path) as pdf:
+#     try:
+#         with fitz.open(pdf_path) as pdf:
 
-            for page in pdf:
-                text += page.get_text()
+#             for page in pdf:
+#                 text += page.get_text()
 
-        # Clean extracted text
-        text = clean_text(text)
+#         # Clean extracted text
+#         text = clean_text(text)
 
-    except Exception as e:
-        print(f"[ERROR] Failed to read {pdf_path}")
-        print(e)
+#     except Exception as e:
+#         print(f"[ERROR] Failed to read {pdf_path}")
+#         print(e)
 
-    return text
+#     return text
 
 
 # if __name__ == "__main__":

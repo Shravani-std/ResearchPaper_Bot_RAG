@@ -1,40 +1,54 @@
+from typing import List
+
+from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-def chunk_text(
-        text: str,
-        chunk_size: int = 500,
-        chunk_overlap: int = 100,
+def chunk_documents(
+    documents: List[Document],
+    chunk_size: int = 200,
+    chunk_overlap: int = 100,
+) -> List[Document]:
 
-):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
-
         separators=[
             "\n\n",   # Paragraph breaks
             "\n",     # Line breaks
+            ". ",     # Sentence boundaries
             " ",      # Spaces
             ""        # Character level
-            ],
-
-        length_function=len,
-        is_separator_regex=False
+        ],
+        length_function=lambda text: len(text.split()),
+        is_separator_regex=False,
     )
 
-    chunks = splitter.split_text(text)
+    chunks = splitter.split_documents(documents)
+
     return chunks
 
+
+
+# from ingestion.data_loader import load_documents
+
 # if __name__ == "__main__":
-#     sample_text = (
-#         "This is a sample text that will be split into chunks. "
-#         "The text splitter will use the specified chunk size and overlap to create manageable pieces of text. "
-#         "This is useful for processing large documents or texts in smaller segments."
+
+#     DATA_PATH = r"D:\AI\RAG\Projects\data"
+
+#     documents = load_documents(DATA_PATH)
+
+#     chunked_docs = chunk_documents(
+#         documents,
+#         chunk_size=200,
+#         chunk_overlap=50
 #     )
 
-#     chunks = chunk_text(sample_text)
-#     print(f"Number of chunks: {len(chunks)}")
-#     for i, chunk in enumerate(chunks):
-#         print(f"Chunk {i + 1}: {chunk}")
+#     print(f"Loaded {len(documents)} pages")
+#     print(f"Created {len(chunked_docs)} chunks\n")
 
-# print("chunking.py is running")
+#     for i, doc in enumerate(chunked_docs[:5]):
+#         print(f"Chunk {i+1}")
+#         print("Metadata:", doc.metadata)
+#         print(doc.page_content[:300])
+#         print("-" * 50)

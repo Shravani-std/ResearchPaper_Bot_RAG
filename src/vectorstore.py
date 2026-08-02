@@ -1,82 +1,155 @@
-from __future__ import annotations
-
-import json
-import math
-from pathlib import Path
-from types import SimpleNamespace
-from typing import Any, List
-
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams, PointStruct
+from typing import List, Any
 from core.config import settings
 
 
+
 class QdrantStore:
-    def __init__(self) -> None:
+    def __init__(self):
+
         self.collection_name = settings.COLLECTION_NAME or "AIResearch_Bot"
-        self._storage_path = Path(__file__).resolve().parent.parent / "vector_db" / "documents.json"
-        self._storage_path.parent.mkdir(parents=True, exist_ok=True)
-        self._points: List[dict[str, Any]] = self._load_points()
 
-    def create_collection(self) -> None:
-        return None
-
-    def upload_documents(self, documents: List[dict[str, Any]]) -> None:
-        for doc in documents:
-            self._points.append(
-                {
-                    "chunk_id": doc.get("chunk_id"),
-                    "embedding": doc.get("embedding", []),
-                    "payload": {
-                                "text": doc["text"],
-                                "source": doc["source"],
-                                "page": doc["page"],
-                                "section": doc["section"],
-                                "chunk_id": doc["chunk_id"],
-                            
-                    },
-                }
+        # self.client = QdrantClient(
+        #     url=settings.QDRANT_URL,
+        #     api_key=settings.QDRANT_API_KEY,
+        # )
+        if settings.QDRANT_API_KEY:
+            self.client = QdrantClient(
+                url=settings.QDRANT_URL,
+                api_key=settings.QDRANT_API_KEY,
             )
-        self._save_points()
+        else:
+            self.client = QdrantClient(
+                url=settings.QDRANT_URL,
+            )
+        # print(self.client.get_collections())
 
-    def search(self, query_vector: List[float], top_k: int = 5) -> List[Any]:
-        if not self._points:
-            return []
+    def create_collection(self, vector_size: int):
 
-        scored_points = []
-        for point in self._points:
-            similarity = self._cosine_similarity(query_vector, point["embedding"])
-            scored_points.append((similarity, point))
+        collections = self.client.get_collections().collections
 
-        scored_points.sort(key=lambda item: item[0], reverse=True)
-        results = []
-        for _, point in scored_points[:top_k]:
-            results.append(
-                SimpleNamespace(
-                    payload=point["payload"],
-                    score=point.get("score", 0.0),
+        names = [c.name for c in collections]
+
+        if self.collection_name in names:
+            print("Collection already exists.")
+            return
+
+        self.client.create_collection(
+            collection_name=self.collection_name,
+            vectors_config=VectorParams(
+                size=vector_size,
+                distance=Distance.COSINE,
+            ),
+        )
+
+        print(f"Collection '{self.collection_name}' created.")
+
+    def upload_documents(
+    self,
+    documents: List[dict[str, Any]],
+    batch_size: int = 100,
+):
+
+        total = len(documents)
+
+        for start in range(0, total, batch_size):
+
+            batch = documents[start:start + batch_size]
+
+            points = []
+
+            for doc in batch:
+
+                points.append(
+                    PointStruct(
+                        id=doc["chunk_id"],
+                        vector=doc["embedding"],
+                        payload={
+                            "text": doc["text"],
+                            "source": doc["source"],
+                            "page": doc["page"],
+                            "section": doc["section"],
+                            "document_id":doc["document_id"],
+                            "chunk_id": doc["chunk_id"],
+                            "chunk_index": doc["chunk_index"],
+                            "previous_chunk": doc["previous_chunk"],
+                            "next_chunk": doc["next_chunk"],
+                            "total_chunks": doc["total_chunks"],
+                        },
+                    )
                 )
+
+            self.client.upsert(
+                collection_name=self.collection_name,
+                points=points,
             )
 
-        return results
+            print(
+                f"Uploaded {min(start + batch_size, total)}/{total}"
+            )
 
-    def _save_points(self) -> None:
-        with self._storage_path.open("w", encoding="utf-8") as handle:
-            json.dump(self._points, handle, indent=2)
+        print("All vectors uploaded successfully.")
 
-    def _load_points(self) -> List[dict[str, Any]]:
-        if not self._storage_path.exists():
-            return []
-        with self._storage_path.open("r", encoding="utf-8") as handle:
-            return json.load(handle)
+    def search(self, query_vector: List[float], top_k: int = 5):
 
-    @staticmethod
-    def _cosine_similarity(left: List[float], right: List[float]) -> float:
-        if not left or not right:
-            return 0.0
 
-        left_length = math.sqrt(sum(value * value for value in left))
-        right_length = math.sqrt(sum(value * value for value in right))
-        if left_length == 0 or right_length == 0:
-            return 0.0
+        results = self.client.query_points(
+            collection_name=self.collection_name,
+            query=query_vector,
+            limit=top_k,
+        )
 
-        dot_product = sum(a * b for a, b in zip(left, right))
-        return dot_product / (left_length * right_length)
+        return results.points
+
+  
+
+# if __name__ == "__main__":
+
+#     from src.embedding import JinaEmbedding
+
+#     # Create embedder
+#     embedder = JinaEmbedding()
+
+#     # Sample text
+#     text = "Transformers use self-attention to model relationships between words."
+
+#     # Generate embedding
+#     embedding = embedder.embed([text])[0]
+
+#     print(f"Embedding Dimension: {len(embedding)}")
+
+#     # Connect to Qdrant
+#     store = QdrantStore()
+
+#     # Create collection (only once)
+#     store.create_collection(len(embedding))
+
+#     # Prepare document
+#     documents = [
+#         {
+#             "chunk_id": 1,
+#             "text": text,
+#             "source": "sample.pdf",
+#             "page": 1,
+#             "section": "Introduction",
+#             "embedding": embedding,
+#         }
+#     ]
+
+#     # Upload
+#     store.upload_documents(documents)
+
+#     print("\nDocument uploaded successfully.")
+
+#     # Search using the same embedding
+#     results = store.search(embedding)
+
+#     print("\nSearch Results\n")
+
+#     for result in results:
+#         print(f"Score : {result.score:.4f}")
+#         print(f"Source: {result.payload['source']}")
+#         print(f"Page  : {result.payload['page']}")
+#         print(f"Text  : {result.payload['text']}")
+#         print("-" * 60)

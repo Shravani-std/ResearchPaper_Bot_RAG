@@ -9,7 +9,9 @@ load_dotenv(BASE_DIR / ".env")
 
 class Settings:
     JINA_API_KEY = os.getenv("JINA_API_EMBEDDINGS")
-    GEMINI_API_KEY = os.getenv("GEMINI_LLM_API")
+    OPEN_ROUTER_API_KEY = os.getenv("OPEN_ROUTER_API")
+    HYDE_MODEL = os.getenv("HYDE_MODEL")
+    OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL")
     QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
     QDRANT_URL = os.getenv("QDRANT_URL")
     COLLECTION_NAME = os.getenv("COLLECTION_NAME", "AIResearch_Bot")
