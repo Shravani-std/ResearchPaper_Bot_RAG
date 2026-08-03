@@ -8,22 +8,33 @@ class SemanticRetriever:
         self.embedding_model = JinaEmbedding()
         self.vector_store = QdrantStore()
 
-    def retrieve(self, query:str) -> List[Dict[str, Any]]:
+    def retrieve(
+    self,
+    query: str,
+    query_embedding: List[float] = None,
+    top_k: int = None,
+) -> List[Dict[str, Any]]:
 
-        print("="*60)
+        print("=" * 60)
         print("Semantic Retrieval")
-        print("="* 60)
+        print("=" * 60)
 
         print(f"Query : {query}")
 
-        # Generate Query Embedding
-        query_embedding = self.embedding_model.embed([query])[0]
+        if top_k is None:
+            top_k = self.top_k
+
+        # Generate embedding only if HyDE didn't provide one
+        if query_embedding is None:
+            query_embedding = self.embedding_model.embed([query])[0]
 
         print(f"Generated Query Embedding : {len(query_embedding)} dimensions")
 
+        results = self.vector_store.search(
+            query_vector=query_embedding,
+            top_k=top_k,
+        )
 
-        #Search Qdrant Vector Store
-        results = self.vector_store.search(query_embedding, top_k=self.top_k)
         retrieved_docs = []
 
         for result in results:
@@ -42,8 +53,8 @@ class SemanticRetriever:
                     "document_id": result.payload.get("document_id", ""),
                 }
             )
+
         return retrieved_docs
-    
 
 # if __name__ == "__main__":
 

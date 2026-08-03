@@ -129,30 +129,30 @@ class HybridRetriever:
         return fused_results[:top_k]
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    retriever = HybridRetriever()
+#     retriever = HybridRetriever()
 
-    query = "What is Retrieval Augmented Generation?"
+#     query = "What is Retrieval Augmented Generation?"
 
-    docs = retriever.retrieve(
-        query=query,
-        top_k=10,
-        use_hyde=True,
-    )
+#     docs = retriever.retrieve(
+#         query=query,
+#         top_k=10,
+#         use_hyde=True,
+#     )
 
-    print("\nHybrid Search Results\n")
+#     print("\nHybrid Search Results\n")
 
-    for i, doc in enumerate(docs):
+#     for i, doc in enumerate(docs):
 
-        print("=" * 70)
+#         print("=" * 70)
 
-        print(f"Rank          : {i + 1}")
-        print(f"Hybrid Score  : {doc['hybrid_score']:.5f}")
-        print(f"Source        : {doc['source']}")
-        print(f"Page          : {doc['page']}")
-        print(f"Chunk ID      : {doc['chunk_id']}")
+#         print(f"Rank          : {i + 1}")
+#         print(f"Hybrid Score  : {doc['hybrid_score']:.5f}")
+#         print(f"Source        : {doc['source']}")
+#         print(f"Page          : {doc['page']}")
+#         print(f"Chunk ID      : {doc['chunk_id']}")
 
-        print()
-        print(doc["text"][:500])
-        print()
+#         print()
+#         print(doc["text"][:500])
+#         print()

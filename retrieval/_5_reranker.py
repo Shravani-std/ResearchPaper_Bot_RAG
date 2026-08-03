@@ -66,41 +66,41 @@ class Reranker:
 
         return documents[:top_k]
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    from retrieval._3_hybrid_search import HybridRetriever
+#     from retrieval._3_hybrid_search import HybridRetriever
 
-    retriever = HybridRetriever()
+#     retriever = HybridRetriever()
 
-    query = "What is Retrieval Augmented Generation?"
+#     query = "What is Retrieval Augmented Generation?"
 
-    documents = retriever.retrieve(
-        query=query,
-        top_k=10,
-    )
+#     documents = retriever.retrieve(
+#         query=query,
+#         top_k=10,
+#     )
 
-    reranker = Reranker()
+#     reranker = Reranker()
 
-    results = reranker.rerank(
-        query=query,
-        documents=documents,
-        top_k=5,
-    )
+#     results = reranker.rerank(
+#         query=query,
+#         documents=documents,
+#         top_k=5,
+#     )
 
-    print("\nFinal Results\n")
+#     print("\nFinal Results\n")
 
-    for i, doc in enumerate(results):
+#     for i, doc in enumerate(results):
 
-        print("=" * 70)
+#         print("=" * 70)
 
-        print(f"Rank : {i+1}")
+#         print(f"Rank : {i+1}")
 
-        print(f"Rerank Score : {doc['rerank_score']:.4f}")
+#         print(f"Rerank Score : {doc['rerank_score']:.4f}")
 
-        print(f"Source : {doc['source']}")
+#         print(f"Source : {doc['source']}")
 
-        print(f"Page : {doc['page']}")
+#         print(f"Page : {doc['page']}")
 
-        print()
+#         print()
 
-        print(doc["text"][:500])
+#         print(doc["text"][:500])

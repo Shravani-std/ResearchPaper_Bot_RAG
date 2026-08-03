@@ -80,30 +80,30 @@ class BM25Retriever:
 
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    retriever = BM25Retriever()
+#     retriever = BM25Retriever()
 
-    query = "What is Retrieval Augmented Generation?"
+#     query = "What is Retrieval Augmented Generation?"
 
-    results = retriever.retrieve(
-        query=query,
-        top_k=5,
-    )
+#     results = retriever.retrieve(
+#         query=query,
+#         top_k=5,
+#     )
 
-    print("\nRetrieved Documents\n")
+#     print("\nRetrieved Documents\n")
 
-    for i, doc in enumerate(results):
+#     for i, doc in enumerate(results):
 
-        print("=" * 70)
+#         print("=" * 70)
 
-        print(f"Rank      : {doc['rank']}")
-        print(f"Score     : {doc['score']:.4f}")
-        print(f"Source    : {doc['source']}")
-        print(f"Page      : {doc['page']}")
-        print(f"Section   : {doc['section']}")
-        print(f"Chunk ID  : {doc['chunk_id']}")
+#         print(f"Rank      : {doc['rank']}")
+#         print(f"Score     : {doc['score']:.4f}")
+#         print(f"Source    : {doc['source']}")
+#         print(f"Page      : {doc['page']}")
+#         print(f"Section   : {doc['section']}")
+#         print(f"Chunk ID  : {doc['chunk_id']}")
 
-        print()
-        print(doc["text"][:500])
-        print()      
+#         print()
+#         print(doc["text"][:500])
+#         print()      

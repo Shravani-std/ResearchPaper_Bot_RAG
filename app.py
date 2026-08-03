@@ -1,80 +1,180 @@
-from __future__ import annotations
-
 import tempfile
 from pathlib import Path
-from typing import List
 
 import streamlit as st
 
-from src.data_ingestion import ingest_document
-from src.retrieval import Retriever
-from src.llm import GeminiLLM
+from ingestion.data_ingestion import run_ingestion
+from llm.chat_engine import ChatEngine
 
-st.set_page_config(page_title="Jina RAG Assistant", page_icon="🤖", layout="wide")
+# -----------------------------
+# Streamlit Configuration
+# -----------------------------
+
+st.set_page_config(
+    page_title="AI Research RAG",
+    page_icon="🤖",
+    layout="wide",
+)
+
+# -----------------------------
+# CSS
+# -----------------------------
 
 st.markdown(
     """
-    <style>
-    .stApp { background-color: #0E1117; color: white; }
-    .block-container { padding-top: 2rem; }
-    .chat-user { background: #1F2937; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-    .chat-bot { background: #111827; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid #4F46E5; }
-    .stButton > button { width: 100%; background: #4F46E5; color: white; border-radius: 10px; height: 45px; border: none; }
-    .stTextInput > div > div > input { background: #1F2937; color: white; }
-    </style>
-    """,
+<style>
+
+.stApp{
+    background:#0E1117;
+}
+
+.chat-user{
+    background:#1F2937;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.chat-bot{
+    background:#111827;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:10px;
+    border-left:5px solid #4F46E5;
+}
+
+</style>
+""",
     unsafe_allow_html=True,
 )
 
-st.sidebar.title("⚙ Settings")
+# -----------------------------
+# Sidebar
+# -----------------------------
 
-uploaded_file = st.sidebar.file_uploader("Upload PDF", type=["pdf"])
+st.sidebar.title("⚙️ Settings")
+
+uploaded_file = st.sidebar.file_uploader(
+    "Upload PDF",
+    type=["pdf"],
+)
 
 if st.sidebar.button("Ingest PDF"):
-    if uploaded_file is not None:
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as temp_file:
-            temp_file.write(uploaded_file.getvalue())
-            temp_path = temp_file.name
+
+    if uploaded_file:
+
+        with tempfile.NamedTemporaryFile(
+            suffix=".pdf",
+            delete=False,
+        ) as tmp:
+
+            tmp.write(uploaded_file.read())
+
+            pdf_path = tmp.name
 
         try:
-            ingest_document(temp_path)
-            st.sidebar.success("PDF indexed successfully")
-        except Exception as exc:
-            st.sidebar.error(f"Upload failed: {exc}")
-        finally:
-            Path(temp_path).unlink(missing_ok=True)
 
-st.title("🤖 AI Research RAG Assistant")
-st.caption("Ask questions from your uploaded PDFs.")
+            run_ingestion(pdf_path)
+
+            st.sidebar.success("Document Indexed Successfully!")
+
+        except Exception as e:
+
+            st.sidebar.error(str(e))
+
+        finally:
+
+            Path(pdf_path).unlink(missing_ok=True)
+
+# -----------------------------
+# Chat Engine
+# -----------------------------
+
+if "engine" not in st.session_state:
+
+    st.session_state.engine = ChatEngine()
+
+engine = st.session_state.engine
+
+# -----------------------------
+# Chat History
+# -----------------------------
 
 if "messages" not in st.session_state:
+
     st.session_state.messages = []
 
-for message in st.session_state.messages:
-    if message["role"] == "user":
-        st.markdown(f"<div class='chat-user'>👤 {message['content']}</div>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<div class='chat-bot'>🤖 {message['content']}</div>", unsafe_allow_html=True)
+st.title("🤖 AI Research Assistant")
 
-question = st.chat_input("Ask anything...")
+st.caption(
+    "Powered by Hybrid Search + HyDE + Contextual Retrieval + Cross Encoder"
+)
+
+# -----------------------------
+# Display Messages
+# -----------------------------
+
+for message in st.session_state.messages:
+
+    with st.chat_message(message["role"]):
+
+        st.markdown(message["content"])
+
+# -----------------------------
+# User Input
+# -----------------------------
+
+question = st.chat_input(
+    "Ask a research question..."
+)
 
 if question:
-    st.session_state.messages.append({"role": "user", "content": question})
 
-    retriever = Retriever()
-    llm = GeminiLLM()
-    results = retriever.retrieve(question)
-    context_parts = []
-    for result in results:
-        payload = getattr(result, "payload", {}) or {}
-        text = payload.get("text") or ""
-        if text:
-            context_parts.append(text)
-    context = "\n\n".join(context_parts)
-    if context.strip():
-        answer = llm.generate_answer(context, question)
-    else:
-        answer = "No indexed content is available yet. Please upload and ingest a PDF first."
+    st.session_state.messages.append(
+        {
+            "role":"user",
+            "content":question,
+        }
+    )
 
-    st.session_state.messages.append({"role": "assistant", "content": answer})
-    st.rerun()
+    with st.chat_message("user"):
+
+        st.markdown(question)
+
+    with st.chat_message("assistant"):
+
+        with st.spinner("Thinking..."):
+
+            response = engine.chat(
+                query=question,
+                use_hyde=True,
+            )
+
+            answer = response["answer"]
+
+            st.markdown(answer)
+
+            with st.expander("Retrieved Sources"):
+
+                for i, doc in enumerate(response["documents"]):
+
+                    st.markdown(
+                        f"""
+### {i+1}
+
+**Source:** {doc['source']}
+
+**Page:** {doc['page']}
+
+**Score:** {doc['rerank_score']:.4f}
+
+{doc['text'][:400]}...
+"""
+                    )
+
+    st.session_state.messages.append(
+        {
+            "role":"assistant",
+            "content":answer,
+        }
+    )

@@ -15,9 +15,19 @@ class HyDE:
         self.url = f"{settings.OPENROUTER_BASE_URL}/chat/completions"
 
         self.headers = {
-            "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+            "Authorization": f"Bearer {settings.OPEN_ROUTER_API}",
             "Content-Type": "application/json",
         }
+
+    @staticmethod
+    def _resolve_model(model_name: Optional[str]) -> str:
+        if not model_name:
+            return "meta-llama/llama-3.2-3b-instruct"
+
+        if model_name.endswith(":free"):
+            return model_name.rsplit(":", 1)[0]
+
+        return model_name
 
     def generate_hypothetical_document(
         self,
@@ -35,8 +45,10 @@ Question:
 Hypothetical Answer:
 """
 
+        model_name = self._resolve_model(settings.HYDE_MODEL)
+
         payload = {
-            "model": settings.HYDE_MODEL,
+            "model": model_name,
             "messages": [
                 {
                     "role": "user",
@@ -53,6 +65,21 @@ Hypothetical Answer:
             json=payload,
             timeout=60,
         )
+
+        print("Status:", response.status_code)
+        print("Response:", response.text)
+
+        if response.status_code == 404:
+            print("[WARNING] OpenRouter rejected the requested model. Retrying with the base model slug.")
+            payload["model"] = "meta-llama/llama-3.2-3b-instruct"
+            response = requests.post(
+                self.url,
+                headers=self.headers,
+                json=payload,
+                timeout=60,
+            )
+            print("Retry Status:", response.status_code)
+            print("Retry Response:", response.text)
 
         response.raise_for_status()
 

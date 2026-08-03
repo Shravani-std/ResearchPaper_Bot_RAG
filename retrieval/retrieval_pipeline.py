@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from retrieval._6_hyde import HyDE
 from retrieval._3_hybrid_search import HybridRetriever
@@ -91,3 +91,35 @@ class RetrievalPipeline:
         print(f"Final {len(final_docs)} chunks.")
 
         return final_docs
+    
+if __name__ == "__main__":
+
+    pipeline = RetrievalPipeline()
+
+    query = "What is Retrieval Augmented Generation?"
+
+    results = pipeline.retrieve(
+        query=query,
+        use_hyde=True,
+        top_k=5,
+    )
+
+    print("\n" + "=" * 80)
+    print("FINAL RETRIEVAL RESULTS")
+    print("=" * 80)
+
+    for i, doc in enumerate(results):
+
+        print(f"\nRank {i+1}")
+        print(f"Source       : {doc['source']}")
+        print(f"Page         : {doc['page']}")
+        print(f"Chunk ID     : {doc['chunk_id']}")
+
+        if "hybrid_score" in doc:
+            print(f"Hybrid Score : {doc['hybrid_score']:.4f}")
+
+        if "rerank_score" in doc:
+            print(f"Rerank Score : {doc['rerank_score']:.4f}")
+
+        print("-" * 60)
+        print(doc["text"][:500])

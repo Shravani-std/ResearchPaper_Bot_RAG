@@ -94,33 +94,64 @@ class ContextualRetriever:
             "page": payload["page"],
             "section": payload["section"],
         }
+    def expand(
+    self,
+    hybrid_results: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
 
+        contextual_results = []
+        visited = set()
 
-if __name__ == "__main__":
+        for doc in hybrid_results:
 
-    retriever = ContextualRetriever()
+            ids = [
+                doc["previous_chunk"],
+                doc["chunk_id"],
+                doc["next_chunk"],
+            ]
 
-    query = "What is Retrieval Augmented Generation?"
+            for chunk_id in ids:
 
-    docs = retriever.retrieve(
-        query=query,
-        top_k=3,
-    )
+                if chunk_id is None:
+                    continue
 
-    print("\nContextual Retrieval Results\n")
+                if chunk_id in visited:
+                    continue
 
-    for i, doc in enumerate(docs):
+                visited.add(chunk_id)
 
-        print("=" * 70)
+                neighbour = self.get_chunk(chunk_id)
 
-        print(f"Chunk ID : {doc['chunk_id']}")
+                if neighbour:
+                    contextual_results.append(neighbour)
 
-        print(f"Page     : {doc['page']}")
+        return contextual_results
 
-        print(f"Source   : {doc['source']}")
+# if __name__ == "__main__":
 
-        print()
+#     retriever = ContextualRetriever()
 
-        print(doc["text"][:400])
+#     query = "What is Retrieval Augmented Generation?"
+
+#     docs = retriever.retrieve(
+#         query=query,
+#         top_k=3,
+#     )
+
+#     print("\nContextual Retrieval Results\n")
+
+#     for i, doc in enumerate(docs):
+
+#         print("=" * 70)
+
+#         print(f"Chunk ID : {doc['chunk_id']}")
+
+#         print(f"Page     : {doc['page']}")
+
+#         print(f"Source   : {doc['source']}")
+
+#         print()
+
+#         print(doc["text"][:400])
 
 
