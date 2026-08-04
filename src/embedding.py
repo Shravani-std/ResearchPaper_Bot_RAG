@@ -8,6 +8,9 @@ from typing import List
 import requests
 
 from core.config import settings
+from core.logger import get_logger
+
+logger = get_logger("embedding")
 
 
 class JinaEmbedding:
@@ -37,7 +40,7 @@ class JinaEmbedding:
         texts = [text if text else "" for text in texts]
 
         if not settings.JINA_API_KEY:
-            print("[WARNING] JINA_API_KEY not found. Using fallback embeddings.")
+            logger.warning("JINA_API_KEY not found. Using fallback embeddings.")
             return [self._fallback_embedding(text) for text in texts]
 
         embeddings = []
@@ -84,11 +87,13 @@ class JinaEmbedding:
 
                 except requests.RequestException as e:
 
-                    print(
-                        f"[WARNING] Batch {start // self.batch_size + 1} "
-                        f"Attempt {attempt + 1}/{self.max_retries} failed."
+                    logger.warning(
+                        "Embedding batch %s attempt %s/%s failed",
+                        start // self.batch_size + 1,
+                        attempt + 1,
+                        self.max_retries,
                     )
-                    print(e)
+                    logger.warning(str(e))
 
                     if (
                         hasattr(e, "response")
@@ -99,7 +104,10 @@ class JinaEmbedding:
                         retry_after = e.response.headers.get("Retry-After")
                         wait_time = int(retry_after) if retry_after else 30
 
-                        print(f"[WARNING] Rate limit reached. Waiting {wait_time} seconds...")
+                        logger.warning(
+                            "Rate limit reached while embedding. Waiting %s seconds.",
+                            wait_time,
+                        )
                         time.sleep(wait_time)
 
                     else:

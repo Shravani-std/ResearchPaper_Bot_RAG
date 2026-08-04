@@ -1,7 +1,8 @@
 from typing import List, Dict, Any
+# from pymupdf import Document
 from rank_bm25 import BM25Okapi 
 import re
-
+from langchain_core.documents import Document
 from ingestion.data_ingestion import load_documents
 from src.chunking import chunk_documents
 
@@ -21,27 +22,32 @@ def tokenize(text: str):
 
     tokens = re.findall(r"\b\w+\b", text.lower())
     return [token for token in tokens if token not in STOPWORDS]
+
 class BM25Retriever:
     def __init__(self):
-        print("=" * 60)
         print("Building BM25 Index...")
-        print("=" * 60)
+        from src.vectorstore import QdrantStore
 
-        # Load All Documents 
-        documents = load_documents(r"D:\AI\RAG\Projects\data")
+        store = QdrantStore()
+        points, _ = store.client.scroll(
+            collection_name=store.collection_name,
+            limit=10000,
+            with_payload=True,
+        )
 
-        # Chunk Documents
-        self.documents = chunk_documents(documents)
+        self.documents = []
+        for p in points:
+            payload = p.payload
+            self.documents.append(
+                Document(
+                    page_content=payload["text"],
+                    metadata=payload,
+                )
+            )
 
-        #Tokenize
-        self.corpus = [
-            tokenize(doc.page_content)
-            for doc in self.documents
-        ]
-
-        # Build BM25 Index
+        self.corpus = [tokenize(doc.page_content) for doc in self.documents]
         self.bm25 = BM25Okapi(self.corpus)
-        print(f"Indexed {len(self.documents)} chunks.\n")
+        print(f"Indexed {len(self.documents)} chunks from Qdrant.\n")
     
     def retrieve(self, query: str, top_k: int = 5, ) -> List[Dict[str, Any]]:
         query_tokens = tokenize(query)
@@ -84,7 +90,7 @@ class BM25Retriever:
 
 #     retriever = BM25Retriever()
 
-#     query = "What is Retrieval Augmented Generation?"
+#     query = "Why was XGBoost chosen as the surrogate model instead of linear regression?"
 
 #     results = retriever.retrieve(
 #         query=query,

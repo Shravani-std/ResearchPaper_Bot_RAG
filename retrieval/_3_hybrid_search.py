@@ -3,6 +3,9 @@ from typing import List, Dict, Any
 from retrieval._1_semantic_search import SemanticRetriever
 from retrieval._2_bm25_search import BM25Retriever
 from retrieval._6_hyde import HyDE
+from core.logger import get_logger, log_step
+
+logger = get_logger("hybrid_search")
 
 
 class HybridRetriever:
@@ -72,9 +75,9 @@ class HybridRetriever:
         use_hyde: bool = True,
     ) -> List[Dict[str, Any]]:
 
-        print("=" * 60)
-        print("Hybrid Retrieval")
-        print("=" * 60)
+        log_step("=" * 60)
+        log_step("Hybrid Retrieval")
+        log_step("=" * 60)
 
         # -------------------------
         # HyDE
@@ -82,17 +85,16 @@ class HybridRetriever:
 
         if use_hyde:
 
-            print("\nGenerating HyDE document...\n")
+            log_step("Generating HyDE document...")
 
             hypothetical_document, query_embedding = (
                 self.hyde.transform_query(query)
             )
 
-            print("=" * 60)
-            print("Hypothetical Document")
-            print("=" * 60)
-            print(hypothetical_document)
-            print()
+            log_step("=" * 60)
+            log_step("Hypothetical Document")
+            log_step("=" * 60)
+            log_step(hypothetical_document)
 
         else:
 
@@ -133,7 +135,7 @@ class HybridRetriever:
 
 #     retriever = HybridRetriever()
 
-#     query = "What is Retrieval Augmented Generation?"
+#     query = "Why was XGBoost chosen as the surrogate model instead of linear regression?"
 
 #     docs = retriever.retrieve(
 #         query=query,

@@ -1,6 +1,9 @@
 from typing import List, Dict
 
 from sentence_transformers import CrossEncoder
+from core.logger import get_logger, log_step
+
+logger = get_logger("reranker")
 
 
 class Reranker:
@@ -11,16 +14,16 @@ class Reranker:
         device: str = "cuda",
     ):
 
-        print("=" * 60)
-        print("Loading Cross Encoder...")
-        print("=" * 60)
+        log_step("=" * 60)
+        log_step("Loading Cross Encoder...")
+        log_step("=" * 60)
 
         self.model = CrossEncoder(
             model_name,
             device=device,
         )
 
-        print(f"Loaded {model_name}")
+        log_step(f"Loaded {model_name}")
 
     def rerank(
         self,
@@ -30,6 +33,7 @@ class Reranker:
     ) -> List[Dict]:
 
         if not documents:
+            log_step("No documents available for reranking.")
             return []
 
         # ------------------------------------
@@ -45,6 +49,7 @@ class Reranker:
         # Predict relevance scores
         # ------------------------------------
 
+        log_step(f"Reranking {len(documents)} documents for query.")
         scores = self.model.predict(pairs)
 
         # ------------------------------------
@@ -64,6 +69,7 @@ class Reranker:
             reverse=True,
         )
 
+        log_step(f"Reranking completed. Returning top {min(top_k, len(documents))} documents.")
         return documents[:top_k]
 
 # if __name__ == "__main__":
@@ -72,7 +78,7 @@ class Reranker:
 
 #     retriever = HybridRetriever()
 
-#     query = "What is Retrieval Augmented Generation?"
+#     query = "Why was XGBoost chosen as the surrogate model instead of linear regression?"
 
 #     documents = retriever.retrieve(
 #         query=query,

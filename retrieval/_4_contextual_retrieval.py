@@ -2,11 +2,14 @@ from typing import List, Dict, Any
 
 from retrieval._3_hybrid_search import HybridRetriever
 from src.vectorstore import QdrantStore
+from core.logger import get_logger, log_step
+
+logger = get_logger("contextual_retrieval")
 
 
 class ContextualRetriever:
     def __init__(self):
-        self.hybrid = HybridRetriever()
+        # self.hybrid = HybridRetriever()
         self.vector_store = QdrantStore()
 
 
@@ -19,35 +22,35 @@ class ContextualRetriever:
 
         # Step -1 : Hybrid Retrieval
 
-        hybrid_results = self.hybrid.retrieve(
-            query=query,
-            top_k=top_k,
-        )
+        # hybrid_results = self.hybrid.retrieve(
+        #     query=query,
+        #     top_k=top_k,
+        # )
 
         contextual_results = []
         visited = set()
 
         # step - 2 : Expand Neighbors
 
-        for doc in hybrid_results:
-            ids = [
-                doc["previous_chunk"],
-                doc["chunk_id"],
-                doc["next_chunk"],
-            ]
+        # for doc in hybrid_results:
+        #     ids = [
+        #         doc["previous_chunk"],
+        #         doc["chunk_id"],
+        #         doc["next_chunk"],
+        #     ]
 
 
-            for chunk_id in ids:
-                if chunk_id is None:
-                    continue
-                if chunk_id in visited:
-                    continue
+        #     for chunk_id in ids:
+        #         if chunk_id is None:
+        #             continue
+        #         if chunk_id in visited:
+        #             continue
 
-                visited.add(chunk_id)
+        #         visited.add(chunk_id)
 
-                neighbour  = self.get_chunk(chunk_id)
-                if neighbour :
-                    contextual_results.append(neighbour )
+        #         neighbour  = self.get_chunk(chunk_id)
+        #         if neighbour :
+        #             contextual_results.append(neighbour )
 
 
         return contextual_results
@@ -102,6 +105,8 @@ class ContextualRetriever:
         contextual_results = []
         visited = set()
 
+        log_step("Expanding hybrid results with neighboring chunks.")
+
         for doc in hybrid_results:
 
             ids = [
@@ -131,7 +136,7 @@ class ContextualRetriever:
 
 #     retriever = ContextualRetriever()
 
-#     query = "What is Retrieval Augmented Generation?"
+#     query = "Why was XGBoost chosen as the surrogate model instead of linear regression?"
 
 #     docs = retriever.retrieve(
 #         query=query,

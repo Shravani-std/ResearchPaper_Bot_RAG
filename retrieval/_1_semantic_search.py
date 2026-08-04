@@ -1,6 +1,9 @@
 from typing import List, Dict, Any
 from src.embedding import JinaEmbedding
 from src.vectorstore import QdrantStore
+from core.logger import get_logger, log_step
+
+logger = get_logger("semantic_search")
 
 class SemanticRetriever:
     def __init__(self, top_k: int = 5):
@@ -15,11 +18,11 @@ class SemanticRetriever:
     top_k: int = None,
 ) -> List[Dict[str, Any]]:
 
-        print("=" * 60)
-        print("Semantic Retrieval")
-        print("=" * 60)
+        log_step("=" * 60)
+        log_step("Semantic Retrieval")
+        log_step("=" * 60)
 
-        print(f"Query : {query}")
+        log_step(f"Query : {query}")
 
         if top_k is None:
             top_k = self.top_k
@@ -28,7 +31,7 @@ class SemanticRetriever:
         if query_embedding is None:
             query_embedding = self.embedding_model.embed([query])[0]
 
-        print(f"Generated Query Embedding : {len(query_embedding)} dimensions")
+        log_step(f"Generated Query Embedding : {len(query_embedding)} dimensions")
 
         results = self.vector_store.search(
             query_vector=query_embedding,
@@ -60,7 +63,7 @@ class SemanticRetriever:
 
     # retriever = SemanticRetriever(top_k=5)
 
-    # query = "What is Retrieval Augmented Generation?"
+    # query = "Why was XGBoost chosen as the surrogate model instead of linear regression?"
 
     # results = retriever.retrieve(query)
 

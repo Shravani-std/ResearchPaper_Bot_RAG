@@ -6,6 +6,9 @@ from typing import List, Dict
 import requests
 
 from core.config import settings
+from core.logger import get_logger, log_step
+
+logger = get_logger("openrouter_llm")
 
 
 class OpenRouterLLM:
@@ -87,11 +90,12 @@ class OpenRouterLLM:
 
             except requests.RequestException as e:
 
-                print(
-                    f"[WARNING] Attempt {attempt+1}/{self.max_retries}"
+                logger.warning(
+                    "OpenRouter attempt %s/%s failed",
+                    attempt + 1,
+                    self.max_retries,
                 )
-
-                print(e)
+                logger.warning(str(e))
 
                 if (
                     hasattr(e, "response")
@@ -105,8 +109,9 @@ class OpenRouterLLM:
                             20,
                         )
 
-                        print(
-                            f"Rate limit. Waiting {retry}s..."
+                        logger.warning(
+                            "Rate limit reached. Waiting %ss before retrying.",
+                            retry,
                         )
 
                         time.sleep(int(retry))
@@ -122,12 +127,12 @@ class OpenRouterLLM:
                     raise RuntimeError(
                         "OpenRouter request failed."
                     ) from e
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    llm = OpenRouterLLM()
+#     llm = OpenRouterLLM()
 
-    answer = llm.generate(
-        prompt="Explain Retrieval Augmented Generation."
-    )
+#     answer = llm.generate(
+#         prompt="Explain Retrieval Augmented Generation."
+#     )
 
-    print(answer)
+#     print(answer)

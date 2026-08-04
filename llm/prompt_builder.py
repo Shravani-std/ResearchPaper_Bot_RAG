@@ -74,31 +74,31 @@ ANSWER
         return prompt
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    builder = PromptBuilder()
+#     builder = PromptBuilder()
 
-    docs = [
+#     docs = [
 
-        {
-            "text": "Retrieval-Augmented Generation combines retrieval with generation.",
-            "source": "RAG.pdf",
-            "page": 5,
-            "section": "Introduction",
-        },
+#         {
+#             "text": "Retrieval-Augmented Generation combines retrieval with generation.",
+#             "source": "RAG.pdf",
+#             "page": 5,
+#             "section": "Introduction",
+#         },
 
-        {
-            "text": "Dense retrieval uses embedding similarity.",
-            "source": "Dense Retrieval.pdf",
-            "page": 2,
-            "section": "Methods",
-        },
+#         {
+#             "text": "Dense retrieval uses embedding similarity.",
+#             "source": "Dense Retrieval.pdf",
+#             "page": 2,
+#             "section": "Methods",
+#         },
 
-    ]
+#     ]
 
-    prompt = builder.build(
-        query="What is Retrieval Augmented Generation?",
-        documents=docs,
-    )
+#     prompt = builder.build(
+#         query="What is Retrieval Augmented Generation?",
+#         documents=docs,
+#     )
 
-    print(prompt)
+#     print(prompt)

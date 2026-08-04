@@ -4,6 +4,9 @@ import requests
 
 from core.config import settings
 from src.embedding import JinaEmbedding
+from core.logger import get_logger, log_step
+
+logger = get_logger("hyde")
 
 
 class HyDE:
@@ -66,11 +69,11 @@ Hypothetical Answer:
             timeout=60,
         )
 
-        print("Status:", response.status_code)
-        print("Response:", response.text)
+        log_step(f"HyDE response status: {response.status_code}")
+        log_step(f"HyDE response body: {response.text}")
 
         if response.status_code == 404:
-            print("[WARNING] OpenRouter rejected the requested model. Retrying with the base model slug.")
+            logger.warning("OpenRouter rejected the requested model. Retrying with the base model slug.")
             payload["model"] = "meta-llama/llama-3.2-3b-instruct"
             response = requests.post(
                 self.url,
@@ -78,12 +81,13 @@ Hypothetical Answer:
                 json=payload,
                 timeout=60,
             )
-            print("Retry Status:", response.status_code)
-            print("Retry Response:", response.text)
+            log_step(f"HyDE retry status: {response.status_code}")
+            log_step(f"HyDE retry response: {response.text}")
 
         response.raise_for_status()
 
         data = response.json()
+        log_step("HyDE document generated successfully.")
 
         return data["choices"][0]["message"]["content"].strip()
 
@@ -97,30 +101,30 @@ Hypothetical Answer:
 
         return hypothetical_document, embedding
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    hyde = HyDE()
+#     hyde = HyDE()
 
-    query = "Our users can't log in, what could be wrong?"
+#     query = "Our users can't log in, what could be wrong?"
 
-    document, embedding = hyde.transform_query(query)
+#     document, embedding = hyde.transform_query(query)
 
-    print("=" * 60)
+#     print("=" * 60)
 
-    print("Original Query\n")
+#     print("Original Query\n")
 
-    print(query)
+#     print(query)
 
-    print()
+#     print()
 
-    print("=" * 60)
+#     print("=" * 60)
 
-    print("Hypothetical Document\n")
+#     print("Hypothetical Document\n")
 
-    print(document)
+#     print(document)
 
-    print()
+#     print()
 
-    print("=" * 60)
+#     print("=" * 60)
 
-    print(f"Embedding Dimension : {len(embedding)}")
+#     print(f"Embedding Dimension : {len(embedding)}")

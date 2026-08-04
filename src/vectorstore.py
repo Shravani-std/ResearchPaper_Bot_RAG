@@ -2,6 +2,9 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 from typing import List, Any
 from core.config import settings
+from core.logger import get_logger
+
+logger = get_logger("vectorstore")
 
 
 
@@ -32,7 +35,7 @@ class QdrantStore:
         names = [c.name for c in collections]
 
         if self.collection_name in names:
-            print("Collection already exists.")
+            logger.info("Collection '%s' already exists.", self.collection_name)
             return
 
         self.client.create_collection(
@@ -43,7 +46,7 @@ class QdrantStore:
             ),
         )
 
-        print(f"Collection '{self.collection_name}' created.")
+        logger.info("Collection '%s' created.", self.collection_name)
 
     def upload_documents(
     self,
@@ -85,11 +88,14 @@ class QdrantStore:
                 points=points,
             )
 
-            print(
-                f"Uploaded {min(start + batch_size, total)}/{total}"
+            logger.info(
+                "Uploaded %s/%s vectors to collection '%s'",
+                min(start + batch_size, total),
+                total,
+                self.collection_name,
             )
 
-        print("All vectors uploaded successfully.")
+        logger.info("All vectors uploaded successfully.")
 
     def search(self, query_vector: List[float], top_k: int = 5):
 
