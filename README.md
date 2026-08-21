@@ -131,9 +131,3 @@ python -m streamlit run app.py
 - **Reranking**: a cross-encoder re-scores the expanded candidate set for true relevance, since embedding similarity and BM25 scores alone are noisy signals.
 - **Consistent chunk IDs**: ingestion and BM25 indexing both read from the same Qdrant collection, so `chunk_id`/`previous_chunk`/`next_chunk` stay consistent across retrieval methods.
 
-## Known Limitations / Next Steps
-
-- No conversation memory — each question is answered independently of prior turns.
-- No deduplication check on re-ingesting the same document.
-- Citation formatting in generated answers can be inconsistent — worth tightening the prompt template in `prompt_builder.py`.
-- Single flat Qdrant collection — no per-document filtering exposed in the UI yet.
